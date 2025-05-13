@@ -3,7 +3,7 @@ import importlib
 import random
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 
-def Regular(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def Regular(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if Alvos is None:
         Alvos = [AlvoS]
     for Alvo in Alvos:
@@ -11,7 +11,7 @@ def Regular(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLo
         Dano = Vsteb(PokemonS,Dano,Ataque)
 
         if I is not None and I != False:
-            Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta = I(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta)
+            Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta = I(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta)
 
         Mitigaçao = 100 / (100 + Defesa)
         DanoM = Dano * Mitigaçao
@@ -271,6 +271,16 @@ class Baralho:
                 elif pokemon["raridade"] == "Lendario":
                     self.PokeLendarios.append(pokemon)
 
+    def Tira_item(self,item):
+        if item["raridade"] == "Comum":
+            self.Comuns.remove(item)
+        elif item["raridade"] == "Incomum":
+            self.Incomuns.remove(item)
+        elif item["raridade"] == "Raro":
+            self.Raros.remove(item)
+        elif item["raridade"] == "Lendario":
+            self.Lendarios.remove(item)
+
     def devolve_item(self,item):
             if item["raridade"] == "Comum":
                 self.Comuns.append(item)
@@ -368,18 +378,9 @@ def Compra_Energia(player,custo=0):
         GV.adicionar_mensagem("Sem ouro para comprar energias")
         
 
-def caixa():
-        while True:
-            raridades = []
-            # U = itens_disponiveis + pokebolas_disponiveis + amplificadores_disponiveis
-            U = 2
-            for i in range(len(U)):
-                        for j in range(6 - U[i]["raridade"]):
-                            raridades.append(U[i])
-            item = random.choice(raridades)
-            if item["classe"] != "caixa":
-                break
-            
+def Gera_item(Lista,Baralho):
+        item = random.choice(Lista)
+        Baralho.tira_item(item)
         return item
 
 def coletor():
@@ -514,13 +515,14 @@ class Jogador:
         else:
             self.energiasDesc.append(energia)
 
-    def ganhar_item(self,item):
+    def ganhar_item(self,item,Baralho):
             if len(self.inventario) < 13:
                 self.inventario.append(item)
                 return True
             else:
                 GV.adicionar_mensagem("Inventário cheio")
                 self.ouro += item["preço"]
+                Baralho.devolve_item(item)
                 return False
 
 def Gerador_player(informaçoes):

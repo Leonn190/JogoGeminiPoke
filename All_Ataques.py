@@ -1,7 +1,7 @@
 # === Início de Agua.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move, GuardarPosicionar
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
@@ -20,14 +20,14 @@ Jato_de_Agua = {
     "irregularidade": False
     }
 
-def FI_Jato_Duplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Jato_Duplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Aumento = random.choice([True,False])
 
     if Aumento is True:
         Dano = Dano * 1.5
         Alvo.efeitosNega["Encharcado"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Jato_Duplo = {
     "nome": "Jato Duplo",
@@ -44,7 +44,7 @@ Jato_Duplo = {
     "irregularidade": FI_Jato_Duplo
     }
 
-def FI_Bolhas(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bolhas(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     try:
         Dano = Dano * (1 + PokemonS.bolhas/5)
     except AttributeError:
@@ -52,7 +52,7 @@ def FI_Bolhas(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Map
     
     PokemonS.bolhas += 1
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bolhas = {
     "nome": "Bolhas",
@@ -94,7 +94,7 @@ def FF_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,alvos,player,inimigo,Ataque,Ma
         EstadoDaPergunta["estado"] = False
         AlvoS.atacado(DanoF,player,inimigo,tela,Mapa)
 
-def F_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Controle_do_Oceano
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -131,14 +131,11 @@ Splash = {
     "irregularidade": False
     }
 
-def F_Vasculhar_no_Rio(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Vasculhar_no_Rio(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     Vezes = random.choice([1,2])
     for i in range(Vezes):
-        item = caixa()
-        if item["classe"] in ["pokebola","Fruta"]:
-            player.Captura.append(item)
-        else:
-            player.inventario.append(item)
+        item = Gera_item(Baralho.Comuns + Baralho.Incomuns)
+        player.ganhar_item(item,Baralho)
 
 Vasculhar_no_Rio = {
     "nome": "Vasculhar no Rio",
@@ -148,19 +145,19 @@ Vasculhar_no_Rio = {
     "dano": 0.0,
     "alcance": 0,
     "precisão": 100, 
-    "descrição": "Vasculhe até 2 itens no rio",
+    "descrição": "Vasculhe até 2 itens no rio, podendo ser da raridade comum ou incomum",
     "efeito": "!None",
     "extra": None,
     "funçao": F_Vasculhar_no_Rio,
     "irregularidade": False
     }
 
-def FI_Golpe_de_Concha(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Golpe_de_Concha(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Dano += PokemonS.Def * Ataque["dano"]
     Dano += PokemonS.Def_sp * Ataque["dano"]
     PokemonS.efeitosPosi["Reforçado"] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Golpe_de_Concha = {
     "nome": "Golpe de Concha",
@@ -177,7 +174,7 @@ Golpe_de_Concha = {
     "irregularidade": FI_Golpe_de_Concha
     }
 
-def F_Gota_Pesada(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Gota_Pesada(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.efeitosNega["Encharcado"] = 4
 
 Gota_Pesada = {
@@ -200,11 +197,11 @@ def Alv_Bola_de_Agua(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bola_de_Agua(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bola_de_Agua(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bola_de_Agua = {
     "nome": "Bola de Água",
@@ -222,11 +219,11 @@ Bola_de_Agua = {
     "irregularidade": FI_Bola_de_Agua
     }
 
-def FI_Cachoeira(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Cachoeira(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.randint(0,100) <= 25:
         GuardarPosicionar(Alvo,player,3,Mapa.Zona)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Cachoeira = {
     "nome": "Cachoeira",
@@ -243,7 +240,7 @@ Cachoeira = {
     "irregularidade": FI_Cachoeira
     }
 
-def FI_Jato_Triplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Jato_Triplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Aumento = random.randint(0,100)
 
     if Aumento > 70:
@@ -253,7 +250,7 @@ def FI_Jato_Triplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataqu
         Dano = Dano * 2.1
         Alvo.efeitosNega["Encharcado"] = 5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Jato_Triplo = {
     "nome": "Jato Triplo",
@@ -280,7 +277,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def FI_Sopro_do_Dragao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Sopro_do_Dragao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
 
     efeitos_ativos = [chave for chave, valor in Alvo.efeitosPosi.items() if valor > 0]
 
@@ -288,7 +285,7 @@ def FI_Sopro_do_Dragao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,A
         efeito_removido = random.choice(efeitos_ativos)
         Alvo.efeitosPosi[efeito_removido] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Sopro_do_Dragao = {
     "nome": "Sopro do Dragão",
@@ -320,7 +317,7 @@ def FF_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,
         EstadoDaPergunta["estado"] = False
         AlvoS.atacado(DanoF,player,inimigo,tela,Mapa)
 
-def F_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Garra_do_Dragao
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -342,7 +339,7 @@ Garra_do_Dragao = {
     "irregularidade": False
     }
 
-def F_Ultraje(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Ultraje(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.atacado(22,player,inimigo,tela,Mapa)
     
 Ultraje = {
@@ -375,11 +372,11 @@ Cauda_Violenta = {
     "irregularidade": False
     }
 
-def FI_Investida_do_Dragao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Investida_do_Dragao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
 
     PokemonS.atacado(36,player,inimigo,tela,Mapa)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Investida_do_Dragao = {
     "nome": "Investida do Dragao",
@@ -406,11 +403,11 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def FI_Eletrolise_Hidrica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Eletrolise_Hidrica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo.efeitosNega["Encharcado"] > 0:
         Dano = Dano * 2.25
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Eletrolise_Hidrica = {
     "nome": "Eletrólise Hidrica",
@@ -442,7 +439,7 @@ Faisca = {
     "irregularidade": False
     }
 
-def F_Onda_Eletrica(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Onda_Eletrica(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.efeitosNega["Paralisado"] = 3
 
 Onda_Eletrica = {
@@ -460,11 +457,11 @@ Onda_Eletrica = {
     "irregularidade": None
     }
 
-def FI_Choque_do_Trovao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Choque_do_Trovao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.randint(0,100) <= 30:
         Alvo.efeitosNega["Paralisado"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Choque_do_Trovao = {
     "nome": "Choque do Trovão",
@@ -481,7 +478,7 @@ Choque_do_Trovao = {
     "irregularidade": FI_Choque_do_Trovao
     }
 
-def F_Energizar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Energizar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if PokemonV is not None:
         if PokemonV in player.pokemons:
             PokemonV.efeitosPosi["Energizado"] += 2
@@ -510,11 +507,11 @@ def Alv_Bola_Eletrica(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bola_Eletrica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bola_Eletrica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bola_Eletrica = {
     "nome": "Bola Elétrica",
@@ -565,10 +562,10 @@ from Geradores.GeradorOutros import caixa, coletor
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def FI_Brilho(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Brilho(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosPosi["Furtivo"] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 def Alv_Brilho(PokemonS,Alvo,player,inimigo,Mapa):
     alvos = []
@@ -608,7 +605,7 @@ Vento_Fada = {
     "irregularidade": False
     }
 
-def F_Bençao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Bençao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonV.efeitosPosi["Abençoado"] = 3
     
 Bençao = {
@@ -637,7 +634,7 @@ def FF_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tel
         player.energias[coletor()] += 1
     EstadoDaPergunta["estado"] = False
 
-def F_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Busca_Alegre
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -659,14 +656,14 @@ Busca_Alegre = {
     "irregularidade": False
     }
 
-def FI_Tapa_das_Fadas(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Tapa_das_Fadas(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     contador = 0
     for efeito in Alvo.efeitosPosi:
         if Alvo.efeitosPosi[efeito] > 1:
             contador += 1
     Dano = Dano * (1 + 0.3 * contador)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Tapa_das_Fadas = {
     "nome": "Tapa das Fadas",
@@ -683,7 +680,7 @@ Tapa_das_Fadas = {
     "irregularidade": FI_Tapa_das_Fadas
     }
 
-def F_Constelaçao_Magica(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Constelaçao_Magica(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     for alvo in Alvos:
         alvo.efeitosPosi["Furtivo"] = 3
 
@@ -718,11 +715,11 @@ def Alv_Explosao_Lunar(PokemonS,Alvo,player,inimigo,Mapa):
 
     return alvos
 
-def FI_Explosao_Lunar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Explosao_Lunar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.4
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Explosao_Lunar = {
     "nome": "Explosão Lunar",
@@ -750,7 +747,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def F_Assombrar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Assombrar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     efeitos_disponiveis = list(AlvoS.efeitosNega.keys())
     if efeitos_disponiveis:
         efeito_escolhido = random.choice(efeitos_disponiveis)
@@ -771,10 +768,10 @@ Assombrar = {
     "irregularidade": False
     }
 
-def FI_Lambida(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Lambida(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.curar(Dano/15,player,tela)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Lambida = {
     "nome": "Lambida",
@@ -791,12 +788,12 @@ Lambida = {
     "irregularidade": FI_Lambida
     }
 
-def FI_Atravessar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Atravessar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     for chave,valor in PokemonS.efeitosNega.items():
         PokemonS.efeitosNega[chave] = 0
         Alvo.efeitosNega[chave] = valor
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Atravessar = {
     "nome": "Atravessar",
@@ -831,7 +828,7 @@ def FF_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Map
         saldo = 1
         EstadoDaPergunta["estado"] = False
 
-def F_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I=None):
+def F_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I=None):
     global saldo
     saldo = 1
     EstadoDaPergunta["funçao"] = FF_Coleta_Gananciosa
@@ -854,7 +851,7 @@ Coleta_Gananciosa = {
     "irregularidade": False
     }
 
-def FI_Mao_Espectral(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Mao_Espectral(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     linhaS, colunaS = PokemonS.local["id"]
     linhaA, colunaA = Alvo.local["id"]
 
@@ -863,7 +860,7 @@ def FI_Mao_Espectral(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ata
     else:
         Move(Alvo,linhaS + 1, colunaS,Mapa.Zona)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Mao_Espectral = {
     "nome": "Mão Espectral",
@@ -884,7 +881,7 @@ def FF_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Alv
     AlvoS.efeitosNega[Escolha] = 4
     EstadoDaPergunta["estado"] = False
 
-def F_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I=None):
+def F_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I=None):
     opçoes = []
     for chave in PokemonS.efeitosNega:
         opçoes.append(chave)
@@ -912,13 +909,13 @@ Maldade = {
     "irregularidade": False
     }
 
-def FI_Massacre_Fantasmagorico(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Massacre_Fantasmagorico(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     for chave in PokemonS.efeitosPosi:
         if Alvo.efeitosPosi[chave] > 1:
-            return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+            return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
     Dano = Dano * 1.41
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Massacre_Fantasmagorico = {
     "nome": "Massacre Fantasmagórico",
@@ -946,7 +943,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores, distancia_entre_pokemons
 import random
 
-def F_Queimar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Queimar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.efeitosNega["Queimado"] = 3
 
 Queimar = {
@@ -969,11 +966,11 @@ def Alv_Bola_de_Fogo(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bola_de_Fogo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bola_de_Fogo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bola_de_Fogo = {
     "nome": "Bola de Fogo",
@@ -991,7 +988,7 @@ Bola_de_Fogo = {
     "irregularidade": FI_Bola_de_Fogo
     }
 
-def FI_Superaquecer(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Superaquecer(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo.efeitosNega["Queimado"] > 0:
         Alvo.efeitosNega["Queimado"] += 1
         Dano = Dano * 1.15
@@ -999,7 +996,7 @@ def FI_Superaquecer(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataq
         PokemonV.efeitosNega["Congelado"] = 0
         PokemonV.efeitosNega["Encharcado"] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Superaquecer = {
     "nome": "Superaquecer",
@@ -1017,11 +1014,11 @@ Superaquecer = {
     "irregularidade": FI_Superaquecer
     }
 
-def FI_Brasa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Brasa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.randint(0,100) > 85:
         Alvo.efeitosNega["Queimado"] += 2
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Brasa = {
     "nome": "Brasa",
@@ -1066,11 +1063,11 @@ Ondas_de_Calor = {
     "irregularidade": False
     }
 
-def FI_Raio_de_Fogo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Raio_de_Fogo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosNega["Congelado"] = 0
     Alvo.efeitosNega["Encharcado"] = 0
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Raio_de_Fogo = {
     "nome": "Raio de Fogo",
@@ -1102,10 +1099,10 @@ Ataque_de_Chamas = {
     "irregularidade": False
     }
 
-def FI_Laser_Incandescente(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Laser_Incandescente(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosNega["Congelado"] = 0
     Alvo.efeitosNega["Encharcado"] = 0
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Laser_Incandescente = {
     "nome": "Laser Incandescente",
@@ -1132,7 +1129,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def F_Cristalizar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Cristalizar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if AlvoS.efeitosNega["Encharcado"] > 0:
         AlvoS.efeitosNega["Congelado"] += AlvoS.efeitosNega["Encharcado"] + 1
         AlvoS.efeitosNega["Encharcado"] = 0
@@ -1152,14 +1149,14 @@ Cristalizar = {
     "irregularidade": False
     }
 
-def FI_Reinado_de_Gelo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Reinado_de_Gelo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     contador = 0
     for pokemon in player.pokemons + inimigo.pokemons:
         if pokemon.efeitosNega["Congelado"] > 0:
             contador += 1
     Dano = Dano * (1 + 0.5 * contador)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Reinado_de_Gelo = {
     "nome": "Reinado de Gelo",
@@ -1183,7 +1180,7 @@ def FF_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,te
     PokemonV.efeitosPosi["Congelado"] = Valor
     EstadoDaPergunta["estado"] = False
 
-def F_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Magia_de_Gelo
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -1206,11 +1203,11 @@ Magia_de_Gelo = {
     "irregularidade": False
     }
 
-def FI_Raio_de_Gelo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Raio_de_Gelo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.randint(0,100) > 80:
         Alvo.efeitosNega["Congelado"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Raio_de_Gelo = {
     "nome": "Raio de Gelo",
@@ -1227,10 +1224,10 @@ Raio_de_Gelo = {
     "irregularidade": FI_Raio_de_Gelo
     }
 
-def FI_Gelo_Verdadeiro(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Gelo_Verdadeiro(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Defesa = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Gelo_Verdadeiro = {
     "nome": "Gelo Verdadeiro",
@@ -1273,11 +1270,11 @@ Mordida = {
     "irregularidade": False
     }
 
-def FI_Seda(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Seda(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo.Varvel_perm > -11:
         Alvo.Varvel_perm -= 12
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Seda = {
     "nome": "Seda",
@@ -1294,11 +1291,11 @@ Seda = {
     "irregularidade": FI_Seda
     }
 
-def FI_Picada(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Picada(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.choice([True,False]) == True:
         Alvo.efeitosNega["Envenenado"] += 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Picada = {
     "nome": "Picada",
@@ -1338,7 +1335,7 @@ def FF_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,
         EstadoDaPergunta["estado"] = False
         AlvoS.atacado(DanoF,player,inimigo,tela,Mapa)
 
-def F_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Minhocagem
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -1360,7 +1357,7 @@ Minhocagem = {
     "irregularidade": False
     }
 
-def F_Coleta(PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Coleta(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     for i in range(4):
         player.energias[coletor()] += 1
 
@@ -1394,10 +1391,10 @@ Tesoura_X = {
     "irregularidade": False
     }
 
-def FI_Dor_Falsa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Dor_Falsa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosPosi["Regeneração"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Dor_Falsa = {
     "nome": "Dor Falsa",
@@ -1424,7 +1421,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def F_Chamar_para_Briga(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Chamar_para_Briga(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.efeitosPosi["Provocando"] = 3
     PokemonS.efeitosPosi["Preparado"] = 3
 
@@ -1478,12 +1475,12 @@ Punho_Missil = {
     "irregularidade": False
     }
 
-def FI_Combate_Proximo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Combate_Proximo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     aliados, inimigos = pokemons_nos_arredores(Alvo, player, inimigo, 1, Mapa.Zona)
     if PokemonS in aliados:
         Dano = Dano * 1.7
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Combate_Proximo = {
     "nome": "Combate Proximo",
@@ -1520,7 +1517,7 @@ def FF_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,
         EstadoDaPergunta["estado"] = False
         AlvoS.atacado(DanoF,player,inimigo,tela,Mapa)
 
-def F_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Submissão
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -1542,7 +1539,7 @@ Submissão = {
     "irregularidade": False
     }
 
-def F_Treinar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Treinar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.Ganhar_XP(3,player)
     vezes = PokemonS.vel // 12
     for i in range(vezes):
@@ -1574,7 +1571,7 @@ from Geradores.GeradorOutros import caixa
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def F_Reforçar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Reforçar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if PokemonV is not None:
         if PokemonV in player.pokemons:
             PokemonV.efeitosPosi["Reforçado"] = 3
@@ -1598,11 +1595,11 @@ Reforçar = {
     "irregularidade": False
     }
 
-def FI_Cauda_de_Ferro(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Cauda_de_Ferro(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.choice([True,False]) == True:
         Alvo.Def_spB -= 1
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Cauda_de_Ferro = {
     "nome": "Cauda de Ferro",
@@ -1634,7 +1631,7 @@ Projetil_Metalico = {
     "irregularidade": False
     }
 
-def F_Barragem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Barragem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     ganho = PokemonS.Atk_sp * 0.4
     if "metal" in PokemonS.tipo:
         ganho = ganho * 1.25
@@ -1656,10 +1653,10 @@ Barragem = {
     "irregularidade": False
     }
 
-def FI_Broca_Perfuradora(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Broca_Perfuradora(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Defesa = Defesa * 0.2
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Broca_Perfuradora = {
     "nome": "Broca Perfuradora",
@@ -1682,7 +1679,7 @@ Broca_Perfuradora = {
 # === Início de Normal.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move, GuardarPosicionar
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -1716,10 +1713,10 @@ Cabeçada = {
     "irregularidade": False
     }
 
-def FI_Investida(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Investida(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.atacado(10,player,inimigo,tela,Mapa)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Investida = {
     "nome": "Investida",
@@ -1736,12 +1733,9 @@ Investida = {
     "irregularidade": FI_Investida
     }
 
-def F_Vasculhar(PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
-    item = caixa()
-    if item["classe"] in ["pokebola","Fruta"]:
-        player.Captura.append(item)
-    else:
-        player.inventario.append(item)
+def F_Vasculhar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
+    item = Gera_item(Baralho.Comuns + Baralho.Incomuns, Baralho)
+    player.ganhar_item(item,Baralho)
 
 Vasculhar = {
     "nome": "Vasculhar",
@@ -1780,7 +1774,7 @@ Ataque_Rapido = {
     "irregularidade": FI_Ataque_Rapido
     }
 
-def F_Provocar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Provocar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.efeitosPosi["Provocando"] = 3
 
 Provocar = { 
@@ -1828,7 +1822,7 @@ Arranhar = {
     "irregularidade": False
     }
 
-def F_Crescer(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Crescer(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.Ganhar_XP(4,player)
 
 Crescer = {
@@ -1846,7 +1840,7 @@ Crescer = {
     "irregularidade": False
     }
 
-def F_Esbravejar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Esbravejar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if PokemonS.Vida < PokemonS.VidaMax * 0.6:
         PokemonS.efeitosPosi["Ofensivo"] = 3
 
@@ -1880,11 +1874,11 @@ Tapa_Especial = {
     "irregularidade": False
     }
 
-def FI_Esmagar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Esmagar(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     
     Dano = Dano + Dano * (1 + 0.1 * PokemonS.Peso // 100)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Esmagar = {
     "nome": "Esmagar",
@@ -1901,7 +1895,7 @@ Esmagar = {
     "irregularidade": FI_Esmagar
     }
 
-def F_Descansar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Descansar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     GuardarPosicionar(PokemonS,player,4,Mapa.Zona)
     cura = (PokemonS.VidaMax - PokemonS.Vida) * 0.35
     PokemonS.curar(cura,player,tela)
@@ -1921,7 +1915,7 @@ Descansar = {
     "irregularidade": False
     }
 
-def F_Canto_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Canto_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     for efeito in PokemonV.efeitosNega:
         PokemonV.efeitosNega[efeito] = 0
  
@@ -1946,7 +1940,7 @@ Canto_Alegre = {
 # === Início de Pedra.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -1980,7 +1974,7 @@ Pedra_Especial = {
     "irregularidade": False
     }
 
-def F_Barragem_Rochosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Barragem_Rochosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.barreira += (PokemonS.Def + PokemonS.Def_sp) * 0.2
 
 Barragem_Rochosa = {
@@ -1998,11 +1992,11 @@ Barragem_Rochosa = {
     "irregularidade": False
     }
 
-def FI_Impacto_Rochoso(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Impacto_Rochoso(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Dano = PokemonS.Def * Ataque["dano"]
     PokemonS.efeitosNega["Quebrado"] = 2
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Impacto_Rochoso = {
     "nome": "Impacto Rochoso",
@@ -2019,12 +2013,13 @@ Impacto_Rochoso = {
     "irregularidade": FI_Impacto_Rochoso
     }
 
-def FI_Pedra_Colossal(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Pedra_Colossal(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if inimigo.inventario != []:  
         item = random.choice(inimigo.inventario)
+        Baralho.devolve_item(item)
         inimigo.inventario.remove(item)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Pedra_Colossal = {
     "nome": "Pedra Colossal",
@@ -2061,7 +2056,7 @@ def FF_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tel
     EstadoDaPergunta["estado"] = False
     AlvoS.atacado(DanoF,player,inimigo,tela,Mapa)
 
-def F_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Furia_Petrea
     EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
@@ -2090,14 +2085,14 @@ Furia_Petrea = {
 # === Início de Planta.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def FI_Dreno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Dreno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.curar(15,player,tela)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Dreno = {
     "nome": "Dreno",
@@ -2114,11 +2109,11 @@ Dreno = {
     "irregularidade": FI_Dreno
     }
 
-def FI_Chicote_de_Vinha(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Chicote_de_Vinha(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.randint(0,100) > 40:
         Dano = Dano * 1.2
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Chicote_de_Vinha = {
     "nome": "Chicote de Vinha",
@@ -2150,7 +2145,7 @@ Disparo_de_Semente = {
     "irregularidade": False
     }
 
-def F_Cura_Natural(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Cura_Natural(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     if PokemonV is not None:
         if PokemonV in player.pokemons:
             PokemonV.efeitosPosi["Regeneração"] += 3
@@ -2193,7 +2188,7 @@ def Alv_Dança_das_Petalas(PokemonS,Alvo,player,inimigo,Mapa):
     aliados, inimigos = pokemons_nos_arredores(PokemonS,player,inimigo,2,Mapa.Zona)
     return aliados + [PokemonS]
 
-def F_Dança_das_Petalas(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Dança_das_Petalas(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     for alvo in Alvos:
         cura = (alvo.VidaMax - alvo.Vida) * 0.15
         alvo.curar(cura,player,tela)
@@ -2215,10 +2210,10 @@ Dança_das_Petalas = {
     "irregularidade": None
     }
 
-def FI_Mega_Dreno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Mega_Dreno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.curar(PokemonS.Atk_sp * 0.45,player,tela)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Mega_Dreno = {
     "nome": "Mega Dreno",
@@ -2255,11 +2250,11 @@ def Alv_Morteiro_de_Polem(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Morteiro_de_Polem(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Morteiro_de_Polem(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Morteiro_de_Polem = {
     "nome": "Morteiro de Pólem",
@@ -2283,11 +2278,11 @@ Morteiro_de_Polem = {
 # === Início de Psiquico.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move, GuardarPosicionar
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def F_Confusão(PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Confusão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.efeitosNega["Confuso"] = 3
 
 Confusão = {
@@ -2310,11 +2305,11 @@ def Alv_Bola_Psíquica(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bola_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bola_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bola_Psiquica = {
     "nome": "Bola Psíquica",
@@ -2332,7 +2327,7 @@ Bola_Psiquica = {
     "irregularidade": FI_Bola_Psiquica
     }
 
-def FI_Teleporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Teleporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     linhaA, colunaA = Alvo.local["id"]
     linhaS, colunaS = PokemonS.local["id"]
     
@@ -2341,7 +2336,7 @@ def FI_Teleporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,
     Move(PokemonS,linhaA,colunaA,Mapa.Zona)
     Move(Alvo,linhaS,colunaS,Mapa.Zona)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Teleporte = {
     "nome": "Teleporte",
@@ -2358,12 +2353,12 @@ Teleporte = {
     "irregularidade": FI_Teleporte
     }
 
-def FI_Ampliação_Mental(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Ampliação_Mental(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     for efeito in PokemonS.efeitosNega:
         if Alvo.efeitosNega[efeito] > 0:
             Alvo.efeitosNega[efeito] += 1
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Ampliação_Mental = {
     "nome": "Ampliação Mental",
@@ -2380,10 +2375,10 @@ Ampliação_Mental = {
     "irregularidade": FI_Ampliação_Mental
     }
 
-def FI_Psiquico_Desgastante(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Psiquico_Desgastante(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.efeitosNega["Incapacitado"] += 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Psiquico_Desgastante = {
     "nome": "Psiquico Desgastante",
@@ -2400,11 +2395,11 @@ Psiquico_Desgastante = {
     "irregularidade": FI_Psiquico_Desgastante
     }
 
-def FI_Mente_Forte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Mente_Forte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if random.choice([True,False]) ==  True:
         PokemonS.efeitosPosi["Focado"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Mente_Forte = {
     "nome": "Mente Forte",
@@ -2421,10 +2416,10 @@ Mente_Forte = {
     "irregularidade": FI_Mente_Forte
     }
 
-def FI_Corrosao_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Corrosao_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Dano = Dano * Alvo.Vida // 100
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Corrosao_Psiquica = {
     "nome": "Corrosão Psíquica",
@@ -2441,7 +2436,7 @@ Corrosao_Psiquica = {
     "irregularidade": FI_Corrosao_Psiquica
     }
 
-def FI_Psicorte_Duplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Psicorte_Duplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Defesa = Defesa * 0.7
     aliados, inimigos = pokemons_nos_arredores(Alvo,player,inimigo,2,Mapa.Zona)
     if PokemonV in inimigos:
@@ -2449,7 +2444,7 @@ def FI_Psicorte_Duplo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,At
         DanoV = Dano * mitigação
         PokemonV.atacado(DanoV,player,inimigo,tela,Mapa)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Psicorte_Duplo = {
     "nome": "Psicorte Duplo",
@@ -2466,14 +2461,14 @@ Psicorte_Duplo = {
     "irregularidade": FI_Psicorte_Duplo
     }
 
-def FI_Transferencia_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Transferencia_Psiquica(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     for efeito in PokemonV.efeitosNega:
         if PokemonV.efeitosNega[efeito] >= 1:
             Alvo.efeitosNega[efeito] += PokemonV.efeitosNega[efeito]
             PokemonV.efeitosNega[efeito] = 0
             break
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Transferencia_Psiquica = {
     "nome": "Tranferência Psíquica",
@@ -2491,7 +2486,7 @@ Transferencia_Psiquica = {
     "irregularidade": FI_Transferencia_Psiquica
     }
 
-def FI_Teletransporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Teletransporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     linhaA, colunaA = Alvo.local["id"]
     linhaS, colunaS = PokemonV.local["id"]
     
@@ -2500,7 +2495,7 @@ def FI_Teletransporte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,At
     Move(PokemonV,linhaA,colunaA,Mapa.Zona)
     Move(Alvo,linhaS,colunaS,Mapa.Zona)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Teletransporte = {
     "nome": "Teletransporte",
@@ -2518,7 +2513,7 @@ Teletransporte = {
     "irregularidade": FI_Teletransporte
     }
 
-def FI_Raio_Psiquico(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Raio_Psiquico(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     contador = 0
     for efeito in Alvo.efeitosNega:
         if Alvo.efeitosNega[efeito] > 0:
@@ -2528,7 +2523,7 @@ def FI_Raio_Psiquico(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ata
             contador += 1
     Dano = Dano * (1 - 0.1 * contador)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Raio_Psiquico = {
     "nome": "Raio Psíquico",
@@ -2545,10 +2540,10 @@ Raio_Psiquico = {
     "irregularidade": FI_Raio_Psiquico
     }
 
-def FI_Agonia_Mental(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Agonia_Mental(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosNega["Incapacitado"] = 5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Agonia_Mental = {
     "nome": "Agonia Mental",
@@ -2571,11 +2566,11 @@ Agonia_Mental = {
 # === Início de Sombrio.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def F_Nas_Sombras(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Nas_Sombras(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.efeitosPosi["Furtivo"] = 5
 
 Nas_Sombras = {
@@ -2598,11 +2593,11 @@ def Alv_Bola_Sombria(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bola_Sombria(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bola_Sombria(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo != AlvoS:
         Dano = Dano * 0.5
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bola_Sombria = {
     "nome": "Bola Sombria",
@@ -2620,14 +2615,14 @@ Bola_Sombria = {
     "irregularidade": FI_Bola_Sombria
     }
 
-def FI_Corte_Noturno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Corte_Noturno(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     linhaS, colunaS = PokemonS.local["id"]
     linhaA, colunaA = Alvo.local["id"]
 
     if linhaS == linhaA - 1:
         Dano = Dano * 1.7
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Corte_Noturno = {
     "nome": "Corte Noturno",
@@ -2644,11 +2639,11 @@ Corte_Noturno = {
     "irregularidade": FI_Corte_Noturno
     }
 
-def FI_Confronto_Trevoso(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Confronto_Trevoso(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     PokemonS.efeitosPosi["Provocando"] = 3
     Alvo.efeitosPosi["Provocando"] = 3
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Confronto_Trevoso = {
     "nome": "Confronto Trevoso",
@@ -2671,7 +2666,7 @@ Confronto_Trevoso = {
 # === Início de Terrestre.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
@@ -2719,11 +2714,11 @@ def Alv_Quebra_Chao(PokemonS,Alvo,player,inimigo,Mapa):
         aliados, inimigos = pokemons_nos_arredores(PokemonS,player,inimigo,2,Mapa.Zona)
         return inimigos
 
-def FI_Quebra_Chao(Dano,Defesa,PokemonS,PokemonV,AlvoS,alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Quebra_Chao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Dano = Dano * PokemonS.Vida / 100
     PokemonS.atacado(Dano*0.15,player,inimigo,tela,Mapa)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Quebra_Chao = {
     "nome": "Quebra Chão",
@@ -2741,7 +2736,7 @@ Quebra_Chao = {
     "irregularidade": FI_Quebra_Chao
     }
 
-def F_Afinidade_Territorial(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Afinidade_Territorial(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.efeitosPosi["Velocista"] = 3
     aliados, inimigos = pokemons_nos_arredores(PokemonS,player,inimigo,2,Mapa.Zona)
     if inimigos == []:
@@ -2777,14 +2772,14 @@ Osso_Veloz = {
     "irregularidade": False
     }
 
-def FI_Golpe_Territorial(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Golpe_Territorial(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if PokemonS.efeitosPosi["Provocando"] > 0:
         Dano = Dano * 1.2
         if Alvo.efeitosPosi["Provocando"] > 0:
             Dano = Dano * 1.1
             Alvo.efeitosPosi["Provocando"] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Golpe_Territorial = {
     "nome": "Golpe Territorial",
@@ -2826,11 +2821,11 @@ Terremoto = {
 # === Início de Veneno.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
-def F_Envenenar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Envenenar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     AlvoS.efeitosNega["Envenenado"] = 3
 
 Envenenar = {
@@ -2848,12 +2843,12 @@ Envenenar = {
     "irregularidade": False
     }
 
-def FI_Acido(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Acido(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Defesa = Defesa * 0.8
     if random.choice([True,False]) == True:
         Alvo.Def_spB -= 1
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Acido = {
     "nome": "Acido",
@@ -2875,12 +2870,12 @@ def Alv_Bomba_de_Lodo(PokemonS,Alvo,player,inimigo,Mapa):
     inimigos.append(Alvo)
     return inimigos
 
-def FI_Bomba_de_Lodo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bomba_de_Lodo(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Alvo.efeitosNega["Envenenado"] = 3
     if Alvo != AlvoS:
         Dano = Dano * 0.0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bomba_de_Lodo = {
     "nome": "Bomba de Lodo",
@@ -2898,12 +2893,12 @@ Bomba_de_Lodo = {
     "irregularidade": FI_Bomba_de_Lodo
     }
 
-def FI_Extraçao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Extraçao(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if Alvo.efeitosNega["Envenenado"] > 0:
         PokemonS.curar(14 * Alvo.efeitosNega["Envenenado"],player,tela)
         Alvo.efeitosNega["Envenenado"] = 0
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Extraçao = {
     "nome": "Extração",
@@ -2926,11 +2921,11 @@ Extraçao = {
 # === Início de Voador.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
-def F_Voar(PokemonS,PokemonV,Alvo,AlvoS,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,I):
+def F_Voar(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     PokemonS.efeitosPosi["Voando"] = 3
 
 Voar = {
@@ -2948,11 +2943,11 @@ Voar = {
     "irregularidade": False
     }
 
-def FI_Ataque_de_Asa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Ataque_de_Asa(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if PokemonS.efeitosPosi["Voando"] > 0:
         Dano = Dano * 0.8
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Ataque_de_Asa = {
     "nome": "Ataque de Asa",
@@ -2969,12 +2964,12 @@ Ataque_de_Asa = {
     "irregularidade": FI_Ataque_de_Asa
     }
 
-def FI_Investida_Aerea(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Investida_Aerea(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     if PokemonS.efeitosPosi["Voando"] > 0:
         Dano = Dano * 1.25
     PokemonS.atacado(15,player,inimigo,tela,Mapa)
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Investida_Aerea = {
     "nome": "Investida Aérea",
@@ -2991,12 +2986,12 @@ Investida_Aerea = {
     "irregularidade": FI_Investida_Aerea
     }
 
-def FI_Rasante(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Rasante(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     DanoV = PokemonS.vel * 1.35 * 0.9
     DanoN = PokemonS.Atk * 1.35 * 0.1
     Dano = DanoV + DanoN
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Rasante = {
     "nome": "Rasante",
@@ -3013,10 +3008,10 @@ Rasante = {
     "irregularidade": FI_Rasante
     }
 
-def FI_Bico_Broca(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Bico_Broca(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     Defesa = Defesa * 0.49
     
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Bico_Broca = {
     "nome": "Bico Broca",
@@ -3033,7 +3028,7 @@ Bico_Broca = {
     "irregularidade": FI_Bico_Broca
     }
 
-def FI_Vento_Forte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta):
+def FI_Vento_Forte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta):
     linhaS, colunaS = PokemonS.local["id"]
     linhaA, colunaA = Alvo.local["id"]
 
@@ -3072,7 +3067,7 @@ def FI_Vento_Forte(Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataqu
 
     Move(Alvo, nova_linha, nova_coluna, Mapa.Zona)
 
-    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta
+    return Dano,Defesa,PokemonS,PokemonV,AlvoS,Alvo,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta
 
 Vento_Forte = {
     "nome": "Vento Forte",
