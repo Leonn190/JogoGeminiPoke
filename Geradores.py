@@ -102,6 +102,7 @@ DicionarioAtaques = {
     "Mão Espectral": lambda: importlib.import_module("Dados.Ataques.Fantasma").Mao_Espectral,
     "Maldade": lambda: importlib.import_module("Dados.Ataques.Fantasma").Maldade,
     "Massacre Fantasmagórico": lambda: importlib.import_module("Dados.Ataques.Fantasma").Massacre_Fantasmagorico,
+    "Vasculhada Trapaceira": lambda: importlib.import_module("Dados.Ataques.Fantasma").Vasculhada_Trapaceira,
 
     "Soco": lambda: importlib.import_module("Dados.Ataques.Lutador").Soco,
     "Chamar para Briga": lambda: importlib.import_module("Dados.Ataques.Lutador").Chamar_para_Briga,
@@ -430,7 +431,7 @@ class Mapa:
 from Geradores.GeradorPokemon import Gerador_final
 from Visual.Sonoridade import tocar
 from Jogo.Abas import Trocar_Ataque_Pergunta
-from Geradores.GeradorOutros import Pokebolas_disponiveis,caixa,coletor
+from Geradores.GeradorOutros import Pokebolas_disponiveis,coletor
 import Visual.GeradoresVisuais as GV
 
 class Jogador:

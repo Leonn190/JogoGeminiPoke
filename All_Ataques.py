@@ -69,7 +69,7 @@ Bolhas = {
     "irregularidade": FI_Bolhas
     }
 
-def FF_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
         
         linhaA, colunaA = AlvoS.local["id"]
 
@@ -97,7 +97,7 @@ def FF_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,alvos,player,inimigo,Ataque,Ma
 def F_Controle_do_Oceano(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Controle_do_Oceano
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["Norte","Sul","Leste","Oeste"]
     EstadoDaPergunta["estado"] = True
 
@@ -302,7 +302,7 @@ Sopro_do_Dragao = {
     "irregularidade": FI_Sopro_do_Dragao
     }
 
-def FF_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
         AlvoS.efeitosNega[Escolha] = 3
 
         Dano, Defesa = VEstilo(PokemonS,AlvoS,Ataque)
@@ -320,7 +320,7 @@ def FF_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,
 def F_Garra_do_Dragao(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Garra_do_Dragao
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["Quebrado","Fragilizado"]
     EstadoDaPergunta["estado"] = True
 
@@ -623,7 +623,7 @@ Bençao = {
     "irregularidade": False
     }
 
-def FF_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
     num = int(Escolha)
     if PokemonV is not None:
         PokemonV.curar(4*num,player,tela)
@@ -637,7 +637,7 @@ def FF_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tel
 def F_Busca_Alegre(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Busca_Alegre
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["0","1","2","3"]
     EstadoDaPergunta["estado"] = True
 
@@ -812,7 +812,7 @@ Atravessar = {
 
 saldo = 1
 
-def FF_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
     global saldo
     if Escolha == "Mais":
         if random.randint(0,100) > saldo * 2:
@@ -832,7 +832,7 @@ def F_Coleta_Gananciosa(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa
     global saldo
     saldo = 1
     EstadoDaPergunta["funçao"] = FF_Coleta_Gananciosa
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["Mais","Parar"]
     EstadoDaPergunta["estado"] = True
 
@@ -877,7 +877,7 @@ Mao_Espectral = {
     "irregularidade": FI_Mao_Espectral
     }
 
-def FF_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
     AlvoS.efeitosNega[Escolha] = 4
     EstadoDaPergunta["estado"] = False
 
@@ -887,7 +887,7 @@ def F_Maldade(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Bara
         opçoes.append(chave)
 
     EstadoDaPergunta["funçao"] = FF_Maldade
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,player,Alvos,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,player,Alvos,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = []
     EstadoDaPergunta["estado"] = True
 
@@ -932,6 +932,48 @@ Massacre_Fantasmagorico = {
     "irregularidade": FI_Massacre_Fantasmagorico
     }
 
+def FF_Vasculhada_Trapaceira(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
+    Escolha = int(Escolha)
+    if player.ouro < Escolha:
+        Escolha = 0
+    player.ouro -= Escolha
+    
+    if Escolha == 0:
+        item = Gera_item(Baralho.Comuns + Baralho.Incomuns,Baralho)
+        player.ganhar_item(item,Baralho)
+    elif Escolha == 5:
+        item = Gera_item(Baralho.Raros,Baralho)
+        player.ganhar_item(item,Baralho)
+    elif Escolha == 10:
+        item = Gera_item(Baralho.Epicos,Baralho)
+        player.ganhar_item(item,Baralho)
+    elif Escolha == 15:
+        item = Gera_item(Baralho.Lendarios,Baralho)
+        player.ganhar_item(item,Baralho)
+
+    EstadoDaPergunta["estado"] = False
+
+def F_Vasculhada_Trapaceira(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
+    
+    EstadoDaPergunta["funçao"] = FF_Vasculhada_Trapaceira
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
+    EstadoDaPergunta["opçoes"] = ["0","5","10","15"]
+    EstadoDaPergunta["estado"] = True
+
+Vasculhada_Trapaceira = {
+    "nome": "Vasculhada Trapaceira",
+    "tipo": ["fantasma"],   
+    "custo": ["preta"],
+    "estilo": "S",
+    "dano": 0.0,
+    "alcance": 0,
+    "precisão": 100, 
+    "descrição": "Escolha o quanto de ouro quer gastar para vasculhar, 0 para comum/incomum, 5 para raro, 10 para epico e 15 para mitico",
+    "efeito": "!None",
+    "extra": None,
+    "funçao": F_Vasculhada_Trapaceira,
+    "irregularidade": False
+    }
 
 
 # === Fim de Fantasma.py ===
@@ -1173,7 +1215,7 @@ Reinado_de_Gelo = {
     "irregularidade": FI_Reinado_de_Gelo
     }
 
-def FF_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
     Valor = int(Escolha)
     PokemonV.curar(20,player,tela)
     PokemonV.efeitosPosi["Regeneração"] = Valor
@@ -1183,7 +1225,7 @@ def FF_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,te
 def F_Magia_de_Gelo(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Magia_de_Gelo
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["2","3","4","5"]
     EstadoDaPergunta["estado"] = True
 
@@ -1312,7 +1354,7 @@ Picada = {
     "irregularidade": FI_Picada
     }
 
-def FF_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
         if Escolha == "Roubar":
             if inimigo.energias["verde"] > 2:
                  inimigo.energias["verde"] -= 2
@@ -1338,7 +1380,7 @@ def FF_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,
 def F_Minhocagem(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Minhocagem
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["Guardar","Roubar"]
     EstadoDaPergunta["estado"] = True
 
@@ -1497,7 +1539,7 @@ Combate_Proximo = {
     "irregularidade": FI_Combate_Proximo
     }
 
-def FF_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
         
         if Escolha == "Sim":
             PokemonS.efeitosNega["Incapacitado"] = 3
@@ -1520,7 +1562,7 @@ def FF_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,
 def F_Submissão(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Submissão
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["Sim","Não"]
     EstadoDaPergunta["estado"] = True
 
@@ -2036,7 +2078,7 @@ Pedra_Colossal = {
     "irregularidade": FI_Pedra_Colossal
     }
 
-def FF_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc,EstadoDaPergunta,Escolha):
+def FF_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,Escolha):
     Valor = int(Escolha)
     
     PokemonS.efeitosPosi["Imortal"] = 2
@@ -2059,7 +2101,7 @@ def FF_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tel
 def F_Furia_Petrea(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     
     EstadoDaPergunta["funçao"] = FF_Furia_Petrea
-    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,AlvoLoc
+    EstadoDaPergunta["info"] = PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc
     EstadoDaPergunta["opçoes"] = ["1","2","3","4"]
     EstadoDaPergunta["estado"] = True
 
