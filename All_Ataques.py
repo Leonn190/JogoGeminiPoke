@@ -134,7 +134,7 @@ Splash = {
 def F_Vasculhar_no_Rio(PokemonS,PokemonV,AlvoS,Alvos,player,inimigo,Ataque,Mapa,tela,Baralho,AlvoLoc,EstadoDaPergunta,I):
     Vezes = random.choice([1,2])
     for i in range(Vezes):
-        item = Gera_item(Baralho.Comuns + Baralho.Incomuns)
+        item = Gera_item(Baralho.Comuns + Baralho.Incomuns,Baralho)
         player.ganhar_item(item,Baralho)
 
 Vasculhar_no_Rio = {
@@ -273,7 +273,7 @@ Jato_Triplo = {
 # === Início de Dragao.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -399,7 +399,7 @@ Investida_do_Dragao = {
 # === Início de Eletrico.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
@@ -558,7 +558,7 @@ Tempestade_de_Raios = {
 # === Início de Fada.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa, coletor
+from Geradores.GeradorOutros import Gera_item, coletor
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -743,7 +743,7 @@ Explosao_Lunar = {
 # === Início de Fantasma.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -939,7 +939,7 @@ Massacre_Fantasmagorico = {
 # === Início de Fogo.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores, distancia_entre_pokemons
 import random
 
@@ -1125,7 +1125,7 @@ Laser_Incandescente = {
 # === Início de Gelo.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -1251,7 +1251,7 @@ Gelo_Verdadeiro = {
 # === Início de Inseto.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move, GuardarPosicionar
-from Geradores.GeradorOutros import caixa, coletor
+from Geradores.GeradorOutros import Gera_item, coletor
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
@@ -1417,7 +1417,7 @@ Dor_Falsa = {
 # === Início de Lutador.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade, pokemons_nos_arredores
 import random
 
@@ -1567,7 +1567,7 @@ Treinar = {
 # === Início de Metal.py ===
 from Geradores.GeradorAtaques import Regular
 from Jogo.Tabuleiro import Move
-from Geradores.GeradorOutros import caixa
+from Geradores.GeradorOutros import Gera_item
 from Jogo.Funções2 import VEstilo, VEfeitos, Vsteb, efetividade
 import random
 
